@@ -19,7 +19,7 @@ variables:
   imagePullSecret: 'demoacr8112021cbd7-auth'
 
   # Agent VM image name
-  vmImageName: 'ubuntu-latest'
+  #vmImageName: 'ubuntu-latest'
 
   # Name of the new namespace being created to deploy the PR changes.
   k8sNamespaceForPR: 'review-app-$(System.PullRequest.PullRequestId)'
@@ -30,8 +30,7 @@ stages:
   jobs:
   - job: Build
     displayName: Build
-    pool:
-      vmImage: $(vmImageName)
+    pool: my-personal-computer
     steps:
     - task: Docker@2
       displayName: Build and push an image to container registry
@@ -54,8 +53,7 @@ stages:
   - deployment: Deploy
     condition: and(succeeded(), not(startsWith(variables['Build.SourceBranch'], 'refs/pull/')))
     displayName: Deploy
-    pool:
-      vmImage: $(vmImageName)
+    pool: my-personal-computer
     environment: 'swetasgitaksupdate-2408.default'
     strategy:
       runOnce:
@@ -85,8 +83,7 @@ stages:
   - deployment: DeployPullRequest
     displayName: Deploy Pull request
     condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/pull/'))
-    pool:
-      vmImage: $(vmImageName)
+    pool: my-personal-computer
 
     environment: 'swetasgitaksupdate-2408.$(k8sNamespaceForPR)'
     strategy:
